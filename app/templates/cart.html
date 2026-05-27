@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart — Mini Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/products" class="navbar-brand">Mini<span>.</span>Commerce</a>
+  <div class="navbar-links">
+    <a href="/products" class="nav-link">Products</a>
+    <a href="/cart" class="nav-link active">🛒 Cart</a>
+    <a href="/orders" class="nav-link">Orders</a>
+    <span class="nav-username">{{ username }}</span>
+    <a href="/logout" class="btn btn-dark btn-sm">Sign Out</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Your Cart</h1>
+    <p>{{ items|length }} item{{ 's' if items|length != 1 else '' }}</p>
+  </div>
+
+  {% if items %}
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Unit Price</th>
+          <th>Qty</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td><strong>{{ item.product.name }}</strong><br><span style="color:var(--muted);font-size:0.8rem">{{ item.product.description }}</span></td>
+          <td>${{ "%.2f"|format(item.product.price) }}</td>
+          <td>{{ item.quantity }}</td>
+          <td style="color:var(--accent);font-weight:600">${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+          <td>
+            <form method="post" action="/cart/remove/{{ item.id }}">
+              <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cart-total">Total: <span>${{ "%.2f"|format(total) }}</span></div>
+
+  <div class="cart-actions">
+    <a href="/products" class="btn btn-dark">← Continue Shopping</a>
+    <form method="post" action="/checkout">
+      <button type="submit" class="btn btn-primary">Place Order →</button>
+    </form>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🛒</div>
+    <h3>Your cart is empty</h3>
+    <p style="margin-bottom:1.5rem">Add some products to get started.</p>
+    <a href="/products" class="btn btn-outline">Browse Products</a>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>

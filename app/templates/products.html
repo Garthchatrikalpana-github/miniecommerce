@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products — Mini Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/products" class="navbar-brand">Mini<span>.</span>Commerce</a>
+  <div class="navbar-links">
+    <a href="/products" class="nav-link active">Products</a>
+    <a href="/cart" class="nav-link">🛒 Cart</a>
+    <a href="/orders" class="nav-link">Orders</a>
+    <span class="nav-username">{{ username }}</span>
+    <a href="/logout" class="btn btn-dark btn-sm">Sign Out</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Products</h1>
+    <p>{{ products|length }} item{{ 's' if products|length != 1 else '' }} available</p>
+  </div>
+
+  {% if products %}
+  <div class="product-grid">
+    {% for p in products %}
+    <div class="card">
+      <div class="card-title">{{ p.name }}</div>
+      <div class="card-desc">{{ p.description }}</div>
+      <div class="card-price">${{ "%.2f"|format(p.price) }}</div>
+
+      {% if p.stock == 0 %}
+        <div class="card-stock out">✗ Out of stock</div>
+        <button class="btn btn-primary" disabled style="width:100%;justify-content:center">Add to Cart</button>
+      {% elif p.stock < 5 %}
+        <div class="card-stock low">⚡ Only {{ p.stock }} left</div>
+        <form method="post" action="/cart/add/{{ p.id }}">
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Add to Cart</button>
+        </form>
+      {% else %}
+        <div class="card-stock">{{ p.stock }} in stock</div>
+        <form method="post" action="/cart/add/{{ p.id }}">
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Add to Cart</button>
+        </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📦</div>
+    <h3>No products yet</h3>
+    <p>Run <code>python seed.py</code> to add demo products.</p>
+  </div>
+  {% endif %}
+
+  <div class="sim-section">
+    <h3>🔧 Failure Simulator</h3>
+    <div class="sim-buttons">
+      <a href="/simulate/db-failure"      class="btn btn-danger  btn-sm">DB Failure</a>
+      <a href="/simulate/timeout"         class="btn btn-warning btn-sm">API Timeout</a>
+      <a href="/simulate/payment-failure" class="btn btn-dark    btn-sm">Payment Failure</a>
+      <a href="/simulate/out-of-stock"    class="btn btn-dark    btn-sm">Out of Stock</a>
+      <a href="/simulate/auth-failure"    class="btn btn-dark    btn-sm">Auth Failure</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

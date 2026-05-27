@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders — Mini Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/products" class="navbar-brand">Mini<span>.</span>Commerce</a>
+  <div class="navbar-links">
+    <a href="/products" class="nav-link">Products</a>
+    <a href="/cart" class="nav-link">🛒 Cart</a>
+    <a href="/orders" class="nav-link active">Orders</a>
+    <span class="nav-username">{{ username }}</span>
+    <a href="/logout" class="btn btn-dark btn-sm">Sign Out</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Order History</h1>
+    <p>{{ orders|length }} order{{ 's' if orders|length != 1 else '' }} placed</p>
+  </div>
+
+  {% if orders %}
+    {% for order in orders %}
+    <div class="card order-card">
+      <div class="order-header">
+        <div>
+          <div class="order-id">Order #{{ order.id }}</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem">
+            {{ order.created_at.strftime('%d %b %Y, %H:%M') if order.created_at else 'N/A' }}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <span class="order-badge">{{ order.status }}</span>
+          <span class="order-total">${{ "%.2f"|format(order.total_amount) }}</span>
+        </div>
+      </div>
+
+      <ul class="order-items">
+        {% for item in order.items %}
+        <li>• {{ item.product.name }} × {{ item.quantity }} — ${{ "%.2f"|format(item.unit_price * item.quantity) }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h3>No orders yet</h3>
+    <p style="margin-bottom:1.5rem">Place your first order from the cart.</p>
+    <a href="/products" class="btn btn-outline">Start Shopping</a>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>
