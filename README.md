@@ -2,6 +2,12 @@
 python3.12 -m venv .venv
 .venv\Scripts\activate
 python -m pip install -r requirements.txt
+uvicorn app.main:app --reload  
+
+
+
+
+
 Azure Container Apps is actually the best fit here — better than App Service for a containerized FastAPI app, and far simpler than AKS. You get auto-scaling, built-in HTTPS, and a public URL out of the box. Let me give you the full guide + IAD diagram.
   ::view-transition-group(*),
   ::view-transition-old(*),
